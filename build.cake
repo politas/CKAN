@@ -1,10 +1,15 @@
 var target = Argument<string>("target", "Build");
 var configuration = Argument<string>("configuration", "Debug");
+var solution = Argument<string>("solution", "CKAN.sln");
 
-Task("Build")
+Task("BuildDotNet")
     .Does(() =>
 {
-    Information("Running Build");
+    DotNetBuild(solution);
 });
+
+Task("Build")
+    .IsDependentOn("BuildDotNet")
+    .Does(() => {});
 
 RunTarget(target);
