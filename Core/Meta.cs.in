@@ -9,7 +9,7 @@ namespace CKAN
         // Do *not* change the following line, BUILD_VERSION is
         // replaced by our build system with our actual version.
 
-        private readonly static string BUILD_VERSION = null;
+        private readonly static string BUILD_VERSION = <%version%>;
 
         /// <summary>
         /// Returns the version of the CKAN.dll used, complete with git info

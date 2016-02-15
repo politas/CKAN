@@ -9,6 +9,14 @@ var solution = Argument<string>("solution", "CKAN.sln");
 Task("BuildDotNet")
     .Does(() =>
 {
+    var version = GetGitVersion();
+
+    var metaFileContents = TransformTextFile("Core/Meta.cs.in")
+        .WithToken("version", version == null ? "null" : $@"""{version}""")
+        .ToString();
+
+    System.IO.File.WriteAllText("Core/Meta.cs", metaFileContents);
+
     DotNetBuild(solution, settings =>
     {
         settings.Properties["win32icon"] = new List<string> { "GUI/assets/ckan.ico" };
@@ -62,8 +70,14 @@ RunTarget(target);
 
 private bool IsStable()
 {
+    var processSettings = new ProcessSettings
+    {
+        Arguments = "rev-parse --abbrev-ref HEAD",
+        RedirectStandardOutput = true
+    };
+
     IEnumerable<string> output;
-    if (StartProcess("git", new ProcessSettings { Arguments = "rev-parse --abbrev-ref HEAD", RedirectStandardOutput = true }, out output) == 0)
+    if (StartProcess("git", processSettings, out output) == 0)
     {
         var branch = output.Single();
         return Regex.IsMatch(branch, @"(\b|_)stable(\b|_)") || Regex.IsMatch(branch, @"v\d+\.\d*[02468]$");
@@ -72,4 +86,19 @@ private bool IsStable()
     {
         return false;
     }
+}
+
+private string GetGitVersion()
+{
+    var processSettings = new ProcessSettings
+    {
+        Arguments = "describe --tags --long",
+        RedirectStandardOutput = true
+    };
+
+    IEnumerable<string> output;
+    if (StartProcess("git", processSettings, out output) == 0)
+        return output.Single();
+    else
+        return null;
 }
