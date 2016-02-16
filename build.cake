@@ -19,7 +19,7 @@ Task("BuildDotNet")
 
     DotNetBuild(solution, settings =>
     {
-        settings.Properties["win32icon"] = new List<string> { "GUI/assets/ckan.ico" };
+        settings.Properties["win32icon"] = new List<string> { MakeAbsolute(File("GUI/assets/ckan.ico")).FullPath };
 
         if (IsStable())
         {
