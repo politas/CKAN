@@ -12,7 +12,7 @@ Task("BuildDotNet")
     var version = GetGitVersion();
 
     var metaFileContents = TransformTextFile("Core/Meta.cs.in")
-        .WithToken("version", version == null ? "null" : $@"""{version}""")
+        .WithToken("version", version == null ? "null" : string.Format(@"""{0}""", version))
         .ToString();
 
     System.IO.File.WriteAllText("Core/Meta.cs", metaFileContents);
@@ -32,13 +32,13 @@ Task("BuildCkan")
     .IsDependentOn("BuildDotNet")
     .Does(() =>
 {
-    var assemblyPaths = GetFiles($"Cmdline/bin/{configuration}/*.dll");
-    assemblyPaths.Add($"Cmdline/bin/{configuration}/CKAN-GUI.exe");
+    var assemblyPaths = GetFiles(string.Format("Cmdline/bin/{0}/*.dll", configuration));
+    assemblyPaths.Add(string.Format("Cmdline/bin/{0}/CKAN-GUI.exe", configuration));
 
-    ILRepack("ckan.exe", $"Cmdline/bin/{configuration}/CmdLine.exe", assemblyPaths,
+    ILRepack("ckan.exe", string.Format("Cmdline/bin/{0}/CmdLine.exe", configuration), assemblyPaths,
         new ILRepackSettings
         {
-            Libs = new List<FilePath> { $"Cmdline/bin/{configuration}" },
+            Libs = new List<FilePath> { string.Format("Cmdline/bin/{0}", configuration) },
             // TODO: Cannot use the "TargetPlaform"
             // Must wait until https://github.com/cake-build/cake/pull/692 is released.
             ArgumentCustomization = builder => {
@@ -53,10 +53,10 @@ Task("BuildNetkan")
     .IsDependentOn("BuildDotNet")
     .Does(() =>
 {
-    ILRepack("netkan.exe", $"Netkan/bin/{configuration}/NetKAN.exe", GetFiles($"Netkan/bin/{configuration}/*.dll"),
+    ILRepack("netkan.exe", string.Format("Netkan/bin/{0}/NetKAN.exe", configuration), GetFiles(string.Format("Netkan/bin/{0}/*.dll", configuration)),
         new ILRepackSettings
         {
-            Libs = new List<FilePath> { $"Netkan/bin/{configuration}" }
+            Libs = new List<FilePath> { string.Format("Netkan/bin/{0}", configuration) }
         }
     );
 });
