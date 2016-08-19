@@ -15,7 +15,7 @@ namespace CKAN
     {
         private static readonly Dictionary<string, RegistryManager> registryCache =
             new Dictionary<string, RegistryManager>();
-        
+
         private static readonly ILog log = LogManager.GetLogger(typeof (RegistryManager));
         private readonly string path;
         public readonly string lockfilePath;
@@ -80,21 +80,23 @@ namespace CKAN
             GC.SuppressFinalize(this);
         }
 
-        protected void Dispose(Boolean safeToAlsoFreeManagedObjects)
+        protected void Dispose(bool safeToAlsoFreeManagedObjects)
         {
             // Right now we just release our lock, and leave everything else
             // to the GC, but if we were implementing the full pattern we'd also
             // free managed (.NET core) objects when called with a true value here.
-
             ReleaseLock();
-            string directory = ksp.CkanDir();
-            if (registryCache.ContainsKey(directory))
+
+            var directory = ksp.CkanDir();
+            if (!registryCache.ContainsKey(directory))
             {
-                log.DebugFormat("Dispose of registry at {0}", directory);
-                if (!registryCache.Remove(directory))
-                {
-                    throw new RegistryInUseKraken(directory);
-                }
+                return;
+            }
+
+            log.DebugFormat("Dispose of registry at {0}", directory);
+            if (!registryCache.Remove(directory))
+            {
+                throw new RegistryInUseKraken(directory);
             }
         }
 
@@ -123,6 +125,7 @@ namespace CKAN
                 lockfileWriter = new StreamWriter(lockfileStream);
                 lockfileWriter.Write(Process.GetCurrentProcess().Id);
                 lockfileWriter.Flush();
+                // The lock file is locked and open at this point.
             }
             catch (IOException)
             {
@@ -152,8 +155,6 @@ namespace CKAN
                 lockfileStream.Dispose();
                 lockfileStream = null;
             }
-
-
         }
 
         /// <summary>
@@ -168,7 +169,7 @@ namespace CKAN
                 log.DebugFormat("Preparing to load registry at {0}", directory);
                 registryCache[directory] = new RegistryManager(directory, ksp);
             }
-            ///else /// create a lock file in existing RegistryManager object.
+            // TODO else create a lock file in existing RegistryManager object.
             ///{
             ///    log.InfoFormat("Attempting to lock old registry at {0}", directory);
             ///    if (! registryCache[directory].GetLock())
