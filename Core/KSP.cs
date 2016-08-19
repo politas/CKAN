@@ -113,6 +113,12 @@ namespace CKAN
                 Cache.Dispose();
                 Cache = null;
             }
+
+            var registry = RegistryManager.Instance(this);
+            if (registry != null)
+            {
+                registry.Dispose();
+            }
         }
 
         #endregion

@@ -30,7 +30,6 @@ namespace CKAN
         public NetFileCache(string _cachePath)
         {
             // Basic validation, our cache has to exist.
-
             if (!Directory.Exists(_cachePath))
             {
                 throw new DirectoryNotFoundKraken(_cachePath, "Cannot find cache directory");
