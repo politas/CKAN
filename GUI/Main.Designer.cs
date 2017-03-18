@@ -67,7 +67,7 @@ namespace CKAN
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.ModList = new CKAN.MainModListGUI();
             this.Installed = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.UpdateCol = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.UpdateSelect = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ModName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Author = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.InstalledVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -452,7 +452,7 @@ namespace CKAN
             this.ModList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ModList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Installed,
-            this.UpdateCol,
+            this.UpdateSelect,
             this.ModName,
             this.Author,
             this.InstalledVersion,
@@ -485,10 +485,10 @@ namespace CKAN
             // 
             // Update
             // 
-            this.UpdateCol.HeaderText = "Update";
-            this.UpdateCol.Name = "Update";
-            this.UpdateCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.UpdateCol.Width = 46;
+            this.UpdateSelect.HeaderText = "Update";
+            this.UpdateSelect.Name = "UpdateSelect";
+            this.UpdateSelect.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.UpdateSelect.Width = 46;
             // 
             // ModName
             // 
@@ -1112,7 +1112,7 @@ namespace CKAN
         private ToolStripMenuItem openKspDirectoryToolStripMenuItem;
         public MainModListGUI ModList;
         private DataGridViewCheckBoxColumn Installed;
-        private DataGridViewCheckBoxColumn UpdateCol;
+        private DataGridViewCheckBoxColumn UpdateSelect;
         private DataGridViewTextBoxColumn ModName;
         private DataGridViewTextBoxColumn Author;
         private DataGridViewTextBoxColumn InstalledVersion;
