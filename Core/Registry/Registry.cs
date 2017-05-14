@@ -27,6 +27,8 @@ namespace CKAN
 
         [JsonProperty] private int registry_version;
 
+        [JsonProperty] private string download_cache_dir;
+
         [JsonProperty("sorted_repositories")]
         private SortedDictionary<string, Repository> repositories; // name => Repository
 
@@ -39,9 +41,16 @@ namespace CKAN
 
         [JsonIgnore] private string transaction_backup;
 
+        [JsonIgnore] public string DownloadCacheDir
+        {
+            get { return this.download_cache_dir; }
+            set { this.download_cache_dir = value; }
+        }
+
         /// <summary>
         /// Returns all the activated registries, sorted by priority and name
         /// </summary>
+
         [JsonIgnore] public SortedDictionary<string, Repository> Repositories
         {
             get { return this.repositories; }

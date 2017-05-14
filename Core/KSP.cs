@@ -304,9 +304,16 @@ namespace CKAN
 
         public string DownloadCacheDir()
         {
-            return KSPPathUtils.NormalizePath(
-                Path.Combine(CkanDir(), "downloads")
-            );
+            var registry = RegistryManager.Instance(this).registry;
+            var path = registry.DownloadCacheDir;
+            if ( path == null)
+            {
+                path = KSPPathUtils.NormalizePath(
+                    Path.Combine(CkanDir(), "downloads")
+                );
+                registry.DownloadCacheDir = path;
+            }
+            return path;
         }
 
         public string Ships()
