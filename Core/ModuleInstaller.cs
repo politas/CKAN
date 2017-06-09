@@ -299,8 +299,8 @@ namespace CKAN
                 return;
             }
 
-            // Find our in the cache if we don't already have it.
-            filename = filename ?? Cache.GetCachedZip(module.download,true);
+            // Find our filename in the cache if we don't already have it.
+            filename = filename ?? Cache.GetCachedFilename(module.download);
 
             // If we *still* don't have a file, then kraken bitterly.
             if (filename == null)
