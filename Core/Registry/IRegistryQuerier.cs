@@ -155,5 +155,43 @@ namespace CKAN
             return !new List<string>(querier.InstalledDlls).Contains(identifier) && querier.IsInstalled(identifier, false)
                 && newest_version.version.IsGreaterThan(querier.InstalledVersion(identifier));
         }
+
+        /// <summary>
+        /// Is the mod installed and does it have a replaced_by relationship with a compatible version
+        /// Check latest information on installed version of mod "identifier" and if it has a "replaced_by"
+        /// value, check if there is a compatible version of the linked mod
+        /// </summary>
+        public static bool HasReplacement(this IRegistryQuerier querier, string identifier, KspVersionCriteria version)
+        {
+            // We only care about the installed version
+            CkanModule installedVersion;
+            try
+            {
+                installedVersion = querier.GetInstalledVersion(identifier);
+            }
+            catch (ModuleNotFoundKraken)
+            {
+                return false;
+            }
+            if (installedVersion == null) return false;  // Mod is not installed, so we don't care about replacements
+            //get the identifier from the replaced_by relationship, if it exists
+            RelationshipDescriptor replacedBy;
+            replacedBy = installedVersion.replaced_by;
+            if (replacedBy == null) return false; // No replaced_by relationship
+            // Now we need to see if there is a compatible version of the replacement
+            CkanModule replaceWith;
+            try
+            {
+                replaceWith = querier.LatestAvailable(replacedBy.name, version);
+            }
+            catch (ModuleNotFoundKraken)
+            {
+                return false;
+            }
+            if (replaceWith == null) return false;
+            return !new List<string>(querier.InstalledDlls).Contains(identifier)
+                && replaceWith.version.IsGreaterThan(replacedBy.min_version);
+
+        }
     }
 }
