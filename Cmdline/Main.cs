@@ -238,6 +238,10 @@ This is a bad idea and there is absolutely no good reason to do it. Please run C
                 case "remove":
                     return (new Remove(user)).RunCommand(manager.CurrentInstance, cmdline.options);
 
+                case "replace":
+                    Scan(manager.CurrentInstance, user, cmdline.action);
+                    return (new Replace(user)).RunCommand(manager.CurrentInstance, cmdline.options);
+                
                 case "upgrade":
                     Scan(manager.CurrentInstance, user, cmdline.action);
                     return (new Upgrade(user)).RunCommand(manager.CurrentInstance, cmdline.options);
