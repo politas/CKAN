@@ -73,6 +73,9 @@ namespace CKAN.CmdLine
         [VerbOption("repair", HelpText = "Attempt various automatic repairs")]
         public SubCommandOptions Repair { get; set; }
 
+        [VerbOption("replace", HelpText = "Replace list of replaceable mods")]
+        public ReplaceOptions Replace { get; set; }
+
         [VerbOption("repo", HelpText = "Manage CKAN repositories")]
         public SubCommandOptions KSP { get; set; }
 
