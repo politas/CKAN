@@ -239,7 +239,6 @@ This is a bad idea and there is absolutely no good reason to do it. Please run C
                     return (new Remove(user)).RunCommand(manager.CurrentInstance, cmdline.options);
 
                 case "replace":
-                    user.RaiseMessage("Replace command detected in Main");
                     Scan(manager.CurrentInstance, user, cmdline.action);
                     return (new Replace(user)).RunCommand(manager.CurrentInstance, cmdline.options);
                 
