@@ -65,7 +65,7 @@ namespace CKAN.CmdLine
                     }
 
                     // Parse the JSON file.
-                    options.modules.Add(LoadCkanFromFile(ksp, filename).identifier);
+                    options.modules.Add(MainClass.LoadCkanFromFile(ksp, filename).identifier);
                 }
 
                 // At times RunCommand() calls itself recursively - in this case we do
@@ -218,22 +218,6 @@ namespace CKAN.CmdLine
             }
 
             return Exit.OK;
-        }
-
-        internal static CkanModule LoadCkanFromFile(CKAN.KSP current_instance, string ckan_file)
-        {
-            CkanModule module = CkanModule.FromFile(ckan_file);
-
-            // We'll need to make some registry changes to do this.
-            RegistryManager registry_manager = RegistryManager.Instance(current_instance);
-
-            // Remove this version of the module in the registry, if it exists.
-            registry_manager.registry.RemoveAvailable(module);
-
-            // Sneakily add our version in...
-            registry_manager.registry.AddAvailable(module);
-
-            return module;
         }
     }
 }
