@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 
 namespace CKAN
 {
-    
+
     /// <summary>
     ///     Everything for dealing with KSP itself.
     /// </summary>
@@ -51,11 +51,11 @@ namespace CKAN
             // Make sure our path is absolute and has normalised slashes.
             gameDir = KSPPathUtils.NormalizePath(Path.GetFullPath(gameDir));
 
-            if (! IsKspDir(gameDir))
+            if (!IsKspDir(gameDir))
             {
                 throw new NotKSPDirKraken(gameDir);
             }
-            
+
             this.gameDir = gameDir;
             Init();
             Cache = new NetFileCache(DownloadCacheDir());
@@ -68,7 +68,7 @@ namespace CKAN
         {
             log.DebugFormat("Initialising {0}", CkanDir());
 
-            if (! Directory.Exists(CkanDir()))
+            if (!Directory.Exists(CkanDir()))
             {
                 User.RaiseMessage("Setting up CKAN for the first time...");
                 User.RaiseMessage("Creating {0}", CkanDir());
@@ -78,7 +78,7 @@ namespace CKAN
                 ScanGameData();
             }
 
-            if (! Directory.Exists(DownloadCacheDir()))
+            if (!Directory.Exists(DownloadCacheDir()))
             {
                 User.RaiseMessage("Creating {0}", DownloadCacheDir());
                 Directory.CreateDirectory(DownloadCacheDir());
@@ -225,7 +225,6 @@ namespace CKAN
             return Directory.Exists(Path.Combine(directory, "GameData"));
         }
 
-
         /// <summary>
         /// Detects the version of KSP in a given directory.
         /// Throws a NotKSPDirKraken if anything goes wrong.
@@ -264,7 +263,7 @@ namespace CKAN
                 return readmeVersionProvider.TryGetVersion(directory, out version) ? version : null;
             }
         }
-        
+
         /// <summary>
         /// Rebuilds the "Ships" directory inside the current KSP instance
         /// </summary>
@@ -304,9 +303,16 @@ namespace CKAN
 
         public string DownloadCacheDir()
         {
-            return KSPPathUtils.NormalizePath(
-                Path.Combine(CkanDir(), "downloads")
-            );
+            var registry = RegistryManager.Instance(this).registry;
+            var path = registry.DownloadCacheDir;
+
+            // If no path was set, default to the CKAN directory
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = KSPPathUtils.NormalizePath(Path.Combine(CkanDir(), "downloads"));
+                registry.DownloadCacheDir = path;
+            }
+            return path;
         }
 
         public string Ships()
@@ -382,7 +388,6 @@ namespace CKAN
             return version = DetectVersion(GameDir());
         }
 
-
         public KspVersionCriteria VersionCriteria()
         {
             return new KspVersionCriteria(Version(), _compatibleVersions);
@@ -399,7 +404,7 @@ namespace CKAN
         {
             // TODO: We really should be asking our Cache object to do the
             // cleaning, rather than doing it ourselves.
-            
+
             log.Debug("Cleaning cache directory");
 
             string[] files = Directory.GetFiles(DownloadCacheDir(), "*", SearchOption.AllDirectories);
@@ -450,7 +455,7 @@ namespace CKAN
                 {
                     manager.registry.RegisterDll(this, dll);
                 }
-                    
+
                 tx.Complete();
             }
             manager.Save(enforce_consistency: false);

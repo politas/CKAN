@@ -110,8 +110,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Label PathLabel;
-        private System.Windows.Forms.TextBox PathTextBox;
+        public System.Windows.Forms.Label PathLabel;
+        public System.Windows.Forms.TextBox PathTextBox;
         private System.Windows.Forms.Button BrowseButton;
         private System.Windows.Forms.Button CancelChangesButton;
         private System.Windows.Forms.Button AcceptChangesButton;

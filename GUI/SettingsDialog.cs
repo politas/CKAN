@@ -93,10 +93,11 @@ namespace CKAN
         private void SetCKANCacheButton_Click(object sender, EventArgs e)
         {
             var dialog = new SetCachePathDialog();
-            if (dialog.ShowDialog() != DialogResult.OK) return;
-
-            var registry = RegistryManager.Instance(CurrentInstance).registry;
-            //registry.DownloadCacheDir = KSPPathUtils.NormalizePath(path);
+            if (dialog.ShowSetCachePathDialog(Main.Instance.configuration.CachePath) == DialogResult.OK)
+            {
+                Main.Instance.configuration.CachePath = dialog.GetPath();
+                Main.Instance.configuration.Save();
+            }
 
             UpdateCacheInfo();
         }
@@ -121,6 +122,7 @@ namespace CKAN
                     }
                     catch (Exception)
                     {
+                        // Ignored
                     }
                 }
 

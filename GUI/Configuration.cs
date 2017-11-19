@@ -8,7 +8,9 @@ namespace CKAN
     public class Configuration
     {
         public string CommandLineArguments = "";
+
         public string CachePath = "";
+        public bool CachePathNoNag = false;
 
         public bool AutoCloseWaitDialog = false;
         public bool URLHandlerNoNag = false;
@@ -62,7 +64,8 @@ namespace CKAN
                     path = path,
                     CommandLineArguments = Platform.IsUnix ? "./KSP.x86_64 -single-instance" :
                             Platform.IsMac ? "./KSP.app/Contents/MacOS/KSP" :
-                            "KSP_x64.exe -single-instance"
+                            "KSP_x64.exe -single-instance",
+                    CachePath = Main.Instance.CurrentInstance.DownloadCacheDir()
                 };
 
                 SaveConfiguration(configuration, path);

@@ -3,13 +3,13 @@ using System.Windows.Forms;
 
 namespace CKAN
 {
-    public partial class SetCachePathDialog : Form
+    public partial class SetCachePathDialog : FormCompatibility
     {
         public SetCachePathDialog()
         {
             InitializeComponent();
+            ApplyFormCompatibilityFixes();
             StartPosition = FormStartPosition.CenterScreen;
-            BrowseButton.Enabled = AcceptChangesButton.Enabled = CancelChangesButton.Enabled = true;
         }
 
         private FolderBrowserDialog browseDialog = new FolderBrowserDialog();
@@ -27,8 +27,19 @@ namespace CKAN
                 var path = browseDialog.SelectedPath;
 
                 var registry = RegistryManager.Instance(CurrentInstance).registry;
-                //registry.DownloadCacheDir = KSPPathUtils.NormalizePath(path);
+                registry.DownloadCacheDir = KSPPathUtils.NormalizePath(path);
             }
+        }
+
+        public DialogResult ShowSetCachePathDialog(string path)
+        {
+            PathTextBox.Text = path;
+            return ShowDialog();
+        }
+
+        public string GetPath()
+        {
+            return PathTextBox.Text;
         }
     }
 }

@@ -36,7 +36,7 @@ namespace CKAN
         Update = 3
     }
 
-    public partial class Main: Form
+    public partial class Main : Form
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(Main));
 
@@ -88,7 +88,7 @@ namespace CKAN
             {
                 var orig = currentChangeSet;
                 currentChangeSet = value;
-                if(!ReferenceEquals(orig, value)) ChangeSetUpdated();
+                if (!ReferenceEquals(orig, value)) ChangeSetUpdated();
             }
         }
 
@@ -99,7 +99,7 @@ namespace CKAN
             {
                 var orig = conflicts;
                 conflicts = value;
-                if(orig != value) ConflictsUpdated();
+                if (orig != value) ConflictsUpdated();
             }
         }
 
@@ -107,7 +107,7 @@ namespace CKAN
         {
             foreach (DataGridViewRow row in ModList.Rows)
             {
-                var module = ((GUIMod) row.Tag);
+                var module = ((GUIMod)row.Tag);
                 string value;
 
                 if (Conflicts != null && Conflicts.TryGetValue(module, out value))
@@ -169,8 +169,8 @@ namespace CKAN
 
             navHistory = new NavigationHistory<GUIMod>();
             navHistory.IsReadOnly = true; // read-only until the UI is started.
-                                            // we switch out of it at the end of OnLoad()
-                                            // when we call NavInit()
+                                          // we switch out of it at the end of OnLoad()
+                                          // when we call NavInit()
 
             InitializeComponent();
 
@@ -240,7 +240,8 @@ namespace CKAN
             if (Platform.IsMac)
             {
                 var timer = new Timer { Interval = 2 };
-                timer.Tick += (sender, e) => {
+                timer.Tick += (sender, e) =>
+                {
                     Thread.Yield();
                 };
                 timer.Start();
@@ -295,6 +296,22 @@ namespace CKAN
                 }
 
                 configuration.CheckForUpdatesOnLaunchNoNag = true;
+                configuration.Save();
+            }
+
+            if (!configuration.CachePathNoNag)
+            {
+                log.Debug("Asking user if they wish to set a cache path");
+                var dialog = new SetCachePathDialog();
+                dialog.PathLabel.Text = "Do you wish to set a global cache path for CKAN? (This can be changed later from Settings)";
+
+                if (dialog.ShowSetCachePathDialog(Instance.configuration.CachePath) == DialogResult.OK)
+                {
+                    configuration.CachePath = dialog.GetPath();
+                    configuration.Save();
+                }
+
+                configuration.CachePathNoNag = true;
                 configuration.Save();
             }
 
@@ -469,7 +486,7 @@ namespace CKAN
         {
             foreach (DataGridViewRow row in ModList.Rows)
             {
-                var mod = ((GUIMod) row.Tag);
+                var mod = ((GUIMod)row.Tag);
                 if (mod.HasUpdate && row.Cells[1] is DataGridViewCheckBoxCell)
                 {
                     MarkModForUpdate(mod.Identifier);
@@ -554,7 +571,8 @@ namespace CKAN
         /// key strokes being interpreted incorrectly when slowed down:
         /// http://mono.1490590.n4.nabble.com/Incorrect-missing-and-duplicate-keypress-events-td4658863.html
         /// </summary>
-        private void RunFilterUpdateTimer() {
+        private void RunFilterUpdateTimer()
+        {
             if (filterTimer == null)
             {
                 filterTimer = new Timer();
@@ -609,11 +627,11 @@ namespace CKAN
             {
                 case Keys.Home:
                     // First row
-                    cell = ModList.Rows [0].Cells [2];
+                    cell = ModList.Rows[0].Cells[2];
                     break;
                 case Keys.End:
                     // Last row
-                    cell = ModList.Rows [ModList.Rows.Count - 1].Cells [2];
+                    cell = ModList.Rows[ModList.Rows.Count - 1].Cells[2];
                     break;
             }
             if (cell != null)
@@ -643,7 +661,7 @@ namespace CKAN
                     var gui_mod = ((GUIMod)current_row.Tag);
                     if (gui_mod.IsInstallable())
                     {
-                        MarkModForInstall(gui_mod.Identifier,uncheck:gui_mod.IsInstallChecked);
+                        MarkModForInstall(gui_mod.Identifier, uncheck: gui_mod.IsInstallChecked);
                     }
                 }
                 e.Handled = true;
@@ -733,7 +751,7 @@ namespace CKAN
                 {
                     case 0:
                         gui_mod.SetInstallChecked(row);
-                        if(gui_mod.IsInstallChecked)
+                        if (gui_mod.IsInstallChecked)
                             last_mod_to_have_install_toggled.Push(gui_mod);
                         break;
                     case 1:
@@ -859,11 +877,9 @@ namespace CKAN
                 return null;
             }
 
-
-            var module = ((GUIMod) selected_item.Tag);
+            var module = ((GUIMod)selected_item.Tag);
             return module;
         }
-
 
         private void launchKSPToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -874,7 +890,7 @@ namespace CKAN
             }
 
             var binary = split[0];
-            var args = string.Join(" ",split.Skip(1));
+            var args = string.Join(" ", split.Skip(1));
 
             try
             {
@@ -917,11 +933,9 @@ namespace CKAN
             Enabled = true;
         }
 
-
-
         private void installFromckanToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog open_file_dialog = new OpenFileDialog {Filter = Resources.CKANFileFilter};
+            OpenFileDialog open_file_dialog = new OpenFileDialog { Filter = Resources.CKANFileFilter };
 
             if (open_file_dialog.ShowDialog() == DialogResult.OK)
             {
@@ -954,7 +968,7 @@ namespace CKAN
 
                 var changeset = new List<ModChange>();
                 changeset.Add(new ModChange(
-                    new GUIMod(module,registry_manager.registry,CurrentInstance.VersionCriteria()),
+                    new GUIMod(module, registry_manager.registry, CurrentInstance.VersionCriteria()),
                     GUIModChangeType.Install, null));
 
                 menuStrip1.Enabled = false;
@@ -1061,7 +1075,7 @@ namespace CKAN
             FocusMod(key, true);
         }
 
-        private void FocusMod(string key, bool exactMatch, bool showAsFirst=false)
+        private void FocusMod(string key, bool exactMatch, bool showAsFirst = false)
         {
             DataGridViewRow current_row = ModList.CurrentRow;
             int currentIndex = current_row != null ? current_row.Index : 0;
@@ -1210,7 +1224,6 @@ namespace CKAN
         public Action<string, object[]> displayError;
         public DisplayYesNo displayYesNo;
 
-
         protected override bool DisplayYesNoDialog(string message)
         {
             if (displayYesNo == null)
@@ -1236,6 +1249,5 @@ namespace CKAN
             Main.Instance.SetDescription(format + " - " + percent + "%");
             Main.Instance.SetProgress(percent);
         }
-
     }
 }

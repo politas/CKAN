@@ -22,27 +22,43 @@ namespace CKAN
 
     public class Registry : IEnlistmentNotification, IRegistryQuerier
     {
-        [JsonIgnore] private const int LATEST_REGISTRY_VERSION = 3;
-        [JsonIgnore] private static readonly ILog log = LogManager.GetLogger(typeof (Registry));
+        [JsonIgnore]
+        private const int LATEST_REGISTRY_VERSION = 3;
 
-        [JsonProperty] private int registry_version;
+        [JsonIgnore]
+        private static readonly ILog log = LogManager.GetLogger(typeof(Registry));
+
+        [JsonProperty]
+        private int registry_version;
+
+        [JsonProperty]
+        private string download_cache_dir;
 
         [JsonProperty("sorted_repositories")]
         private SortedDictionary<string, Repository> repositories; // name => Repository
 
         // TODO: These may be good as custom types, especially those which process
         // paths (and flip from absolute to relative, and vice-versa).
-        [JsonProperty] internal Dictionary<string, AvailableModule> available_modules;
-        [JsonProperty] private Dictionary<string, string> installed_dlls; // name => path
-        [JsonProperty] private Dictionary<string, InstalledModule> installed_modules;
-        [JsonProperty] private Dictionary<string, string> installed_files; // filename => module
+        [JsonProperty]
+        internal Dictionary<string, AvailableModule> available_modules;
 
-        [JsonIgnore] private string transaction_backup;
+        [JsonProperty]
+        private Dictionary<string, string> installed_dlls; // name => path
+
+        [JsonProperty]
+        private Dictionary<string, InstalledModule> installed_modules;
+
+        [JsonProperty]
+        private Dictionary<string, string> installed_files; // filename => module
+
+        [JsonIgnore]
+        private string transaction_backup;
 
         /// <summary>
         /// Returns all the activated registries, sorted by priority and name
         /// </summary>
-        [JsonIgnore] public SortedDictionary<string, Repository> Repositories
+        [JsonIgnore]
+        public SortedDictionary<string, Repository> Repositories
         {
             get { return this.repositories; }
 
@@ -53,7 +69,8 @@ namespace CKAN
         /// <summary>
         /// Returns all the installed modules
         /// </summary>
-        [JsonIgnore] public IEnumerable<InstalledModule> InstalledModules
+        [JsonIgnore]
+        public IEnumerable<InstalledModule> InstalledModules
         {
             get { return installed_modules.Values; }
         }
@@ -61,9 +78,20 @@ namespace CKAN
         /// <summary>
         /// Returns the names of installed DLLs.
         /// </summary>
-        [JsonIgnore] public IEnumerable<string> InstalledDlls
+        [JsonIgnore]
+        public IEnumerable<string> InstalledDlls
         {
             get { return installed_dlls.Keys; }
+        }
+
+        /// <summary>
+        /// Gets and sets the global cache directory.
+        /// </summary>
+        [JsonIgnore]
+        public string DownloadCacheDir
+        {
+            get { return this.download_cache_dir; }
+            set { this.download_cache_dir = value; }
         }
 
         #region Registry Upgrades
@@ -72,8 +100,7 @@ namespace CKAN
         private void DeSerialisationFixes(StreamingContext context)
         {
             // Our context is our KSP install.
-            KSP ksp = (KSP) context.Context;
-
+            KSP ksp = (KSP)context.Context;
 
             // Older registries didn't have the installed_files list, so we create one
             // if absent.
@@ -90,9 +117,9 @@ namespace CKAN
             {
                 log.Warn("Older registry format detected, normalising paths...");
 
-                var normalised_installed_files = new Dictionary<string,string>();
+                var normalised_installed_files = new Dictionary<string, string>();
 
-                foreach (KeyValuePair<string,string> tuple in installed_files)
+                foreach (KeyValuePair<string, string> tuple in installed_files)
                 {
                     string path = KSPPathUtils.NormalizePath(tuple.Key);
 
@@ -295,7 +322,7 @@ namespace CKAN
             // In theory, this should put everything back the way it was, overwriting whatever
             // we had previously.
 
-            var options = new JsonSerializerSettings {ObjectCreationHandling = ObjectCreationHandling.Replace};
+            var options = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
 
             JsonConvert.PopulateObject(transaction_backup, this, options);
 
@@ -365,7 +392,7 @@ namespace CKAN
 
             var identifier = module.identifier;
             // If we've never seen this module before, create an entry for it.
-            if (! available_modules.ContainsKey(identifier))
+            if (!available_modules.ContainsKey(identifier))
             {
                 log.DebugFormat("Adding new available module {0}", identifier);
                 available_modules[identifier] = new AvailableModule(identifier);
@@ -483,7 +510,6 @@ namespace CKAN
             return incompatible;
         }
 
-
         /// <summary>
         /// <see cref = "IRegistryQuerier.LatestAvailable" />
         /// </summary>
@@ -493,7 +519,7 @@ namespace CKAN
         public CkanModule LatestAvailable(
             string module,
             KspVersionCriteria ksp_version,
-            RelationshipDescriptor relationship_descriptor =null)
+            RelationshipDescriptor relationship_descriptor = null)
         {
             log.DebugFormat("Finding latest available for {0}", module);
 
@@ -501,14 +527,13 @@ namespace CKAN
 
             try
             {
-                return available_modules[module].Latest(ksp_version,relationship_descriptor);
+                return available_modules[module].Latest(ksp_version, relationship_descriptor);
             }
             catch (KeyNotFoundException)
             {
                 throw new ModuleNotFoundKraken(module);
             }
         }
-
 
         public List<CkanModule> AllAvailable(string module)
         {
@@ -534,7 +559,6 @@ namespace CKAN
                 : null;
         }
 
-
         /// <summary>
         /// <see cref = "IRegistryQuerier.LatestAvailableWithProvides" />
         /// </summary>
@@ -555,7 +579,7 @@ namespace CKAN
         /// calculated. Not for direct public consumption. ;)
         /// </summary>
         private List<CkanModule> LatestAvailableWithProvides(string module, KspVersionCriteria ksp_version,
-            IEnumerable<CkanModule> available_for_current_version, RelationshipDescriptor relationship_descriptor=null)
+            IEnumerable<CkanModule> available_for_current_version, RelationshipDescriptor relationship_descriptor = null)
         {
             log.DebugFormat("Finding latest available with provides for {0}", module);
 
@@ -848,7 +872,7 @@ namespace CKAN
         /// <summary>
         /// <see cref = "IRegistryQuerier.InstalledVersion" />
         /// </summary>
-        public Version InstalledVersion(string modIdentifier, bool with_provides=true)
+        public Version InstalledVersion(string modIdentifier, bool with_provides = true)
         {
             InstalledModule installedModule;
 
