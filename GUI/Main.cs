@@ -305,10 +305,17 @@ namespace CKAN
                 var dialog = new SetCachePathDialog();
                 dialog.PathLabel.Text = "Do you wish to set a global cache path for CKAN? (This can be changed later from Settings)";
 
-                if (dialog.ShowSetCachePathDialog(Instance.configuration.CachePath) == DialogResult.OK)
+                var registry = RegistryManager.Instance(CurrentInstance).registry;
+                if (dialog.ShowSetCachePathDialog(registry.DownloadCacheDir) == DialogResult.OK)
                 {
-                    var registry = RegistryManager.Instance(CurrentInstance).registry;
+                    // Save to registry
                     registry.DownloadCacheDir = dialog.GetPath();
+
+                    // Also save in config
+                    Instance.configuration.CachePath = dialog.GetPath();
+                    configuration.Save();
+
+                    CurrentInstance.Cache.MoveDefaultCache(dialog.GetPath(), true);
                 }
 
                 configuration.CachePathNoNag = true;

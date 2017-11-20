@@ -25,9 +25,6 @@ namespace CKAN
             {
                 var path = browseDialog.SelectedPath;
                 PathTextBox.Text = path;
-
-                var registry = RegistryManager.Instance(Main.Instance.CurrentInstance).registry;
-                registry.DownloadCacheDir = KSPPathUtils.NormalizePath(path);
             }
         }
 

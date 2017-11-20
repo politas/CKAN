@@ -90,13 +90,25 @@ namespace CKAN
 
         private void SetCKANCacheButton_Click(object sender, EventArgs e)
         {
+            // Get registry
+            var registry = RegistryManager.Instance(Main.Instance.CurrentInstance).registry;
+
+            // Show dialog
             var dialog = new SetCachePathDialog();
-            if (dialog.ShowSetCachePathDialog(Main.Instance.configuration.CachePath) != DialogResult.OK)
+            if (dialog.ShowSetCachePathDialog(registry.DownloadCacheDir) != DialogResult.OK)
                 return;
 
-            var registry = RegistryManager.Instance(Main.Instance.CurrentInstance).registry;
+            // Save to registry
             registry.DownloadCacheDir = dialog.GetPath();
 
+            // Also save to config
+            Main.Instance.configuration.CachePath = dialog.GetPath();
+            Main.Instance.configuration.Save();
+
+            // Move old cache to new one
+            Main.Instance.CurrentInstance.Cache.MoveDefaultCache(dialog.GetPath(), true);
+
+            // Refresh info
             UpdateCacheInfo();
         }
 

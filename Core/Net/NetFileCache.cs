@@ -303,7 +303,7 @@ namespace CKAN
                 a.ReadByte();
                 a.Close();
 
-                Directory.GetFiles(testFilePath);
+                //Directory.GetFiles(testFilePath);
 
                 File.Delete(testFilePath);
             }
