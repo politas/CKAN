@@ -13,7 +13,6 @@ namespace CKAN
         }
 
         private FolderBrowserDialog browseDialog = new FolderBrowserDialog();
-        public KSP CurrentInstance { get; set; }
 
         private void SetCachePathDialog_Load(object sender, EventArgs e)
         {
@@ -25,8 +24,9 @@ namespace CKAN
             if (browseDialog.ShowDialog() == DialogResult.OK)
             {
                 var path = browseDialog.SelectedPath;
+                PathTextBox.Text = path;
 
-                var registry = RegistryManager.Instance(CurrentInstance).registry;
+                var registry = RegistryManager.Instance(Main.Instance.CurrentInstance).registry;
                 registry.DownloadCacheDir = KSPPathUtils.NormalizePath(path);
             }
         }

@@ -7,6 +7,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using log4net;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Permissions;
 
 namespace CKAN
@@ -274,7 +275,7 @@ namespace CKAN
         /// <summary>
         /// Moves the old cache folder to a new one.
         /// </summary>
-        /// <param name="newPath">The path to move to.</param>
+        /// <param name="newPath">The path to move the files to.</param>
         /// <param name="move">Whether to move the files or copy them. Set to <see langword="true"/> to move the files, defaults to <see langword="false"/> otherwise.</param>
         public bool MoveDefaultCache(string newPath, bool move = false)
         {
@@ -289,19 +290,9 @@ namespace CKAN
                 Directory.CreateDirectory(newPath);
             }
 
-            // Check that we have list permission
-            try
-            {
-                Directory.GetFiles(newPath);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return false;
-            }
-
             string testFilePath = Path.Combine(newPath, "CKAN_TestFile");
 
-            // Check that we have read/write permission
+            // Check that we have read, write and list permission
             try
             {
                 FileStream a = File.Create(testFilePath);
@@ -312,17 +303,20 @@ namespace CKAN
                 a.ReadByte();
                 a.Close();
 
+                Directory.GetFiles(testFilePath);
+
                 File.Delete(testFilePath);
             }
             catch (UnauthorizedAccessException)
             {
+                log.ErrorFormat("CKAN requires permission to write to the new cache path.");
                 return false;
             }
 
             // TODO: Start a new transaction
 
             // Get a list of all the files in the old cache and move them over
-            var files = Directory.EnumerateFiles(cachePath, "*");
+            var files = Directory.EnumerateFiles(cachePath, "*").ToList();
 
             foreach (string file in files)
             {
@@ -343,7 +337,7 @@ namespace CKAN
             registry.SetCachePath(newPath);
             cachePath = newPath;
 
-            // Clean the old directory of files we moved
+            // Clean the old directory of files we copied
             if (!move)
             {
                 foreach (string file in files)

@@ -307,8 +307,8 @@ namespace CKAN
 
                 if (dialog.ShowSetCachePathDialog(Instance.configuration.CachePath) == DialogResult.OK)
                 {
-                    configuration.CachePath = dialog.GetPath();
-                    configuration.Save();
+                    var registry = RegistryManager.Instance(CurrentInstance).registry;
+                    registry.DownloadCacheDir = dialog.GetPath();
                 }
 
                 configuration.CachePathNoNag = true;

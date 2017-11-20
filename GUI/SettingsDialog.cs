@@ -15,8 +15,6 @@ namespace CKAN
 
         private List<Repository> _sortedRepos = new List<Repository>();
 
-        public KSP CurrentInstance { get; set; }
-
         public SettingsDialog()
         {
             InitializeComponent();
@@ -93,11 +91,11 @@ namespace CKAN
         private void SetCKANCacheButton_Click(object sender, EventArgs e)
         {
             var dialog = new SetCachePathDialog();
-            if (dialog.ShowSetCachePathDialog(Main.Instance.configuration.CachePath) == DialogResult.OK)
-            {
-                Main.Instance.configuration.CachePath = dialog.GetPath();
-                Main.Instance.configuration.Save();
-            }
+            if (dialog.ShowSetCachePathDialog(Main.Instance.configuration.CachePath) != DialogResult.OK)
+                return;
+
+            var registry = RegistryManager.Instance(Main.Instance.CurrentInstance).registry;
+            registry.DownloadCacheDir = dialog.GetPath();
 
             UpdateCacheInfo();
         }

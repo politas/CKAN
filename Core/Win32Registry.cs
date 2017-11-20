@@ -70,7 +70,7 @@ namespace CKAN
 
         public string GetCachePath()
         {
-            return GetRegistryValue(@"GlobalCache", null as string);
+            return GetRegistryValue("GlobalCache", null as string);
         }
 
         public void SetCachePath(string cachePath)
