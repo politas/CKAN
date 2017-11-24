@@ -120,9 +120,10 @@ namespace Tests.Core
         [DllImport("libc", EntryPoint = "chmod", SetLastError = true)]
         private static extern int Sys_chmod(string path, uint mode);
 
-        private static uint S_IRUSR = 0000400;
-        private static uint S_IWUSR = 0000200;
-        private static uint S_IXUSR = 0000100;
+        private const uint S_IRUSR = 0000400;
+        private const uint S_IWUSR = 0000200;
+        private const uint S_IXUSR = 0000100;
+        private const uint S_IRWXU = 0000700;
 
         [Test]
         public void MoveCacheFailsForNoAccess()
@@ -134,32 +135,32 @@ namespace Tests.Core
             Uri url = new Uri("http://example.com/");
             string file = TestData.DogeCoinFlagZip();
 
-            Assert.IsFalse(cache.IsCached(url));
+            Assert.IsFalse(cache.IsCached(url), "The example file shouldn't be stored.");
             cache.Store(url, file);
 
             // Change the permissions (Disable read/write)
             Assert.AreEqual(Sys_chmod(cache_dir_moved, S_IXUSR), 0);
 
             // Move the cache
-            Assert.IsFalse(cache.MoveDefaultCache(cache_dir_moved));
+            Assert.IsFalse(cache.MoveDefaultCache(cache_dir_moved), "The cache shouldn't be moved if we don't have read/write permission.");
 
             // Change the permissions (Enable read)
             Assert.AreEqual(Sys_chmod(cache_dir_moved, S_IRUSR), 0);
 
             // Move the cache
-            Assert.IsFalse(cache.MoveDefaultCache(cache_dir_moved));
+            Assert.IsFalse(cache.MoveDefaultCache(cache_dir_moved), "The cache shouldn't be moved if we don't have write permission.");
 
             // Change the permissions (Enable write)
             Assert.AreEqual(Sys_chmod(cache_dir_moved, S_IWUSR), 0);
 
             // Move the cache
-            Assert.IsFalse(cache.MoveDefaultCache(cache_dir_moved));
+            Assert.IsFalse(cache.MoveDefaultCache(cache_dir_moved), "The cache shouldn't be moved if we don't have read permission.");
 
             // Enable all permissions
-            Assert.AreEqual(Sys_chmod(cache_dir_moved, S_IRUSR | S_IWUSR | S_IXUSR), 0);
+            Assert.AreEqual(Sys_chmod(cache_dir_moved, S_IRWXU), 0);
 
             // Move the cache
-            Assert.IsTrue(cache.MoveDefaultCache(cache_dir_moved));
+            Assert.IsTrue(cache.MoveDefaultCache(cache_dir_moved), "The cache should be moved if we have full permission.");
         }
 
         [Test]
