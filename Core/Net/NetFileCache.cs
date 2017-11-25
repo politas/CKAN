@@ -290,9 +290,20 @@ namespace CKAN
                 Directory.CreateDirectory(newPath);
             }
 
+            // Check that we have list permission
+            try
+            {
+                Directory.GetFiles(newPath);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                log.ErrorFormat("CKAN requires permission to list files in the new cache path.");
+                return false;
+            }
+
             string testFilePath = Path.Combine(newPath, "CKAN_TestFile");
 
-            // Check that we have read, write and list permission
+            // Check that we have read/write permission
             try
             {
                 FileStream a = File.Create(testFilePath);
@@ -303,13 +314,11 @@ namespace CKAN
                 a.ReadByte();
                 a.Close();
 
-                //Directory.GetFiles(testFilePath);
-
                 File.Delete(testFilePath);
             }
             catch (UnauthorizedAccessException)
             {
-                log.ErrorFormat("CKAN requires permission to write to the new cache path.");
+                log.ErrorFormat("CKAN requires permission to read/write to the new cache path.");
                 return false;
             }
 
