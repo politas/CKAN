@@ -33,8 +33,8 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.MetaDataUpperLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.MetadataModuleNameLabel = new System.Windows.Forms.Label();
-            this.MetadataModuleAbstractLabel = new System.Windows.Forms.Label ();
-            this.MetadataModuleDescriptionLabel = new System.Windows.Forms.Label ();
+            this.MetadataModuleAbstractLabel = new System.Windows.Forms.Label();
+            this.MetadataModuleDescriptionLabel = new System.Windows.Forms.Label();
             this.MetaDataLowerLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.IdentifierLabel = new System.Windows.Forms.Label();
             this.MetadataIdentifierLabel = new System.Windows.Forms.Label();
@@ -136,7 +136,7 @@
             this.MetaDataUpperLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize, 20F));
             this.MetaDataUpperLayoutPanel.RowStyles.Add (new System.Windows.Forms.RowStyle (System.Windows.Forms.SizeType.AutoSize, 30F));
             this.MetaDataUpperLayoutPanel.RowStyles.Add (new System.Windows.Forms.RowStyle (System.Windows.Forms.SizeType.AutoSize, 80F));
-            this.MetaDataUpperLayoutPanel.Size = new System.Drawing.Size(346, 283);
+            this.MetaDataUpperLayoutPanel.Size = new System.Drawing.Size(346, 233);
             this.MetaDataUpperLayoutPanel.TabIndex = 0;
             //
             // MetadataModuleNameLabel
